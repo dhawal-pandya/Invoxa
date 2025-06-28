@@ -42,7 +42,7 @@ func CreateOrganization(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{"message": "Organization created successfully", "organization_id": organization.ID})
+	c.JSON(http.StatusCreated, organization)
 }
 
 type OrgSummaryResponse struct {

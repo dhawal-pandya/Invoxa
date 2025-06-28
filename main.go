@@ -27,11 +27,11 @@ func main() {
 		authRequired.GET("/user/:id/subscriptions", handlers.GetUserSubscriptions)
 		authRequired.POST("/subscription_plans", handlers.CreateSubscriptionPlan)
 
-		authRequired.POST("/organizations", handlers.CreateOrganization)
 		authRequired.GET("org/:id/summary", handlers.GetOrgSummary)
-		authRequired.POST("/users", handlers.CreateUser)
 	}
-
+	
+	r.POST("/users", handlers.CreateUser)
+	r.POST("/organizations", handlers.CreateOrganization)
 	r.POST("/admin/clear_db", handlers.ClearDatabase)
 
 	r.GET("/ping", func(c *gin.Context) {
