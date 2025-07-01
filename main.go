@@ -6,18 +6,40 @@ import (
 	"invoxa/database"
 	"invoxa/handlers"
 
+	sdktracer "github.com/dhawal-pandya/aeonis/packages/tracer-sdk/go"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
+	exporter := sdktracer.NewHTTPExporter("http://localhost:8000/v1/traces", "B3VPHj7JWL6RV6UDaW_S4IE3oIT5fFEAvbZQkKNN6fo")
+	sanitizer := sdktracer.NewPIISanitizer()
+	handlers.Tracer = sdktracer.NewTracerWithExporter("invoxa-test", exporter, sanitizer)
+
 	database.ConnectDatabase()
 
 	r := gin.Default()
 
-	authMiddleware := handlers.AuthMiddleware()
+	r.Use(func(c *gin.Context) {
+		ctx, span := handlers.Tracer.StartSpan(c.Request.Context(), c.Request.URL.Path)
+		defer span.End()
+
+		span.SetAttributes(map[string]interface{}{
+			"http.method": c.Request.Method,
+			"http.url":    c.Request.URL.String(),
+			"http.client_ip": c.ClientIP(),
+			"http.user_agent": c.Request.UserAgent(),
+		})
+
+		c.Request = c.Request.WithContext(ctx)
+		c.Next()
+
+		span.SetAttributes(map[string]interface{}{
+			"http.status_code": c.Writer.Status(),
+		})
+	})
 
 	authRequired := r.Group("/")
-	authRequired.Use(authMiddleware)
+	authRequired.Use(handlers.AuthMiddleware())
 	{
 		authRequired.POST("/subscribe", handlers.Subscribe)
 		authRequired.POST("/pay_invoice", handlers.PayInvoice)
@@ -29,7 +51,7 @@ func main() {
 
 		authRequired.GET("org/:id/summary", handlers.GetOrgSummary)
 	}
-	
+
 	r.POST("/users", handlers.CreateUser)
 	r.POST("/organizations", handlers.CreateOrganization)
 	r.POST("/admin/clear_db", handlers.ClearDatabase)
@@ -40,5 +62,5 @@ func main() {
 		})
 	})
 
-	log.Fatal(r.Run(":8080"))
+	log.Fatal(r.Run(":8081"))
 }

@@ -17,6 +17,11 @@ import (
 	"gorm.io/gorm"
 )
 
+func TestMain(m *testing.M) {
+	InitTracerForTests()
+	m.Run()
+}
+
 func setupBillingTestDB(t *testing.T) (*gorm.DB, *models.Organization, *models.User) {
 	db, err := gorm.Open(sqlite.Open("file::memory:"), &gorm.Config{})
 	assert.NoError(t, err)

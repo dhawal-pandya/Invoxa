@@ -11,6 +11,10 @@ import (
 
 func AuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		if c.Request.URL.Path == "/users" {
+			c.Next()
+			return
+		}
 		callerUserIDStr := c.Query("caller_user_id")
 		callerOrganizationIDStr := c.Query("caller_organization_id")
 

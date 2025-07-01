@@ -17,6 +17,9 @@ type CreateOrganizationRequest struct {
 }
 
 func CreateOrganization(c *gin.Context) {
+	_, span := Tracer.StartSpan(c.Request.Context(), "CreateOrganization")
+	defer span.End()
+
 	var req CreateOrganizationRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})

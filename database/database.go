@@ -6,6 +6,7 @@ import (
 
 	"invoxa/models"
 
+	"github.com/dhawal-pandya/aeonis/packages/tracer-sdk/go/contrib"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -20,6 +21,10 @@ func ConnectDatabase() {
 	})
 	if err != nil {
 		log.Fatalf("Failed to connect to database: %v", err)
+	}
+
+	if err := db.Use(&contrib.GormTracer{}); err != nil {
+		log.Fatalf("Failed to use gorm tracer: %v", err)
 	}
 
 	DB = db

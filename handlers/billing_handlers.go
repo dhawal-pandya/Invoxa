@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"context"
+	"errors"
 	"net/http"
 	"strconv"
 	"time"
@@ -19,61 +21,38 @@ type SubscribeRequest struct {
 }
 
 func Subscribe(c *gin.Context) {
+	_, span := Tracer.StartSpan(c.Request.Context(), "Subscribe")
+	defer span.End()
+
 	var req SubscribeRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	callerOrganizationID := c.GetUint64("callerOrganizationID")
-
-	if uint(callerOrganizationID) != req.OrganizationID {
-		c.JSON(http.StatusForbidden, gin.H{"error": "Unauthorized: Caller organization ID does not match target organization ID"})
+	// Validate the request
+	out := Tracer.TraceFunc(c.Request.Context(), validateSubscriptionRequest, c, req)
+	if err, ok := out[0].(error); ok && err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+	plan := out[1].(models.SubscriptionPlan)
 
-	var organization models.Organization
-	if err := database.DB.First(&organization, req.OrganizationID).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Organization not found"})
+	// Create the subscription
+	out = Tracer.TraceFunc(c.Request.Context(), createSubscription, req, plan)
+	if err, ok := out[0].(error); ok && err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
+	subscription := out[1].(models.Subscription)
 
-	var plan models.SubscriptionPlan
-	if err := database.DB.Where("id = ? AND organization_id = ?", req.SubscriptionPlanID, req.OrganizationID).First(&plan).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Subscription plan not found for this organization"})
+	// Create the invoice
+	out = Tracer.TraceFunc(c.Request.Context(), createInvoice, req, plan)
+	if err, ok := out[0].(error); ok && err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-
-	var user models.User
-	if err := database.DB.Where("id = ? AND organization_id = ?", req.UserID, req.OrganizationID).First(&user).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "User not found or does not belong to the target organization"})
-		return
-	}
-
-	subscription := models.Subscription{
-		OrganizationID:     req.OrganizationID,
-		SubscriptionPlanID: plan.ID,
-		StartDate:          time.Now(),
-		IsActive:           true,
-	}
-	if err := database.DB.Create(&subscription).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create subscription"})
-		return
-	}
-
-	invoice := models.Invoice{
-		OrganizationID: req.OrganizationID,
-		UserID:         req.UserID,
-		Amount:         plan.Price, 
-		Currency:       plan.Currency,
-		IssueDate:      time.Now(),
-		DueDate:        time.Now().AddDate(0, 1, 0), // due in 1 month for monthly plans
-		Paid:           false,
-	}
-	if err := database.DB.Create(&invoice).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create initial invoice"})
-		return
-	}
+	invoice := out[1].(models.Invoice)
 
 	c.JSON(http.StatusCreated, gin.H{
 		"message":         "Subscription and initial invoice created successfully",
@@ -81,6 +60,61 @@ func Subscribe(c *gin.Context) {
 		"invoice_id":      invoice.ID,
 	})
 }
+
+func validateSubscriptionRequest(c *gin.Context, req SubscribeRequest) (error, models.SubscriptionPlan) {
+	callerOrganizationID := c.GetUint64("callerOrganizationID")
+
+	if uint(callerOrganizationID) != req.OrganizationID {
+		return errors.New("Unauthorized: Caller organization ID does not match target organization ID"), models.SubscriptionPlan{}
+	}
+
+	var organization models.Organization
+	if err := database.DB.WithContext(c.Request.Context()).First(&organization, req.OrganizationID).Error; err != nil {
+		return errors.New("Organization not found"), models.SubscriptionPlan{}
+	}
+
+	var plan models.SubscriptionPlan
+	if err := database.DB.WithContext(c.Request.Context()).Where("id = ? AND organization_id = ?", req.SubscriptionPlanID, req.OrganizationID).First(&plan).Error; err != nil {
+		return errors.New("Subscription plan not found for this organization"), models.SubscriptionPlan{}
+	}
+
+	var user models.User
+	if err := database.DB.WithContext(c.Request.Context()).Where("id = ? AND organization_id = ?", req.UserID, req.OrganizationID).First(&user).Error; err != nil {
+		return errors.New("User not found or does not belong to the target organization"), models.SubscriptionPlan{}
+	}
+
+	return nil, plan
+}
+
+func createSubscription(req SubscribeRequest, plan models.SubscriptionPlan) (error, models.Subscription) {
+	subscription := models.Subscription{
+		OrganizationID:     req.OrganizationID,
+		SubscriptionPlanID: plan.ID,
+		StartDate:          time.Now(),
+		IsActive:           true,
+	}
+	if err := database.DB.WithContext(context.Background()).Create(&subscription).Error; err != nil {
+		return errors.New("Failed to create subscription"), models.Subscription{}
+	}
+	return nil, subscription
+}
+
+func createInvoice(req SubscribeRequest, plan models.SubscriptionPlan) (error, models.Invoice) {
+	invoice := models.Invoice{
+		OrganizationID: req.OrganizationID,
+		UserID:         req.UserID,
+		Amount:         plan.Price,
+		Currency:       plan.Currency,
+		IssueDate:      time.Now(),
+		DueDate:        time.Now().AddDate(0, 1, 0), // due in 1 month for monthly plans
+		Paid:           false,
+	}
+	if err := database.DB.WithContext(context.Background()).Create(&invoice).Error; err != nil {
+		return errors.New("Failed to create initial invoice"), models.Invoice{}
+	}
+	return nil, invoice
+}
+
 
 type PayInvoiceRequest struct {
 	InvoiceID     uint    `json:"invoice_id" binding:"required"`
@@ -373,11 +407,14 @@ type CreateSubscriptionPlanRequest struct {
 	Description    string  `json:"description"`
 	Price          float64 `json:"price" binding:"required,gte=0"`
 	Currency       string  `json:"currency" binding:"required"`
-	Interval       string  `json:"interval" binding:"required"` 
-	OrganizationID uint    `json:"organization_id" binding:"required"` 
+	Interval       string  `json:"interval" binding:"required"`
+	OrganizationID uint    `json:"organization_id" binding:"required"`
 }
 
 func CreateSubscriptionPlan(c *gin.Context) {
+	_, span := Tracer.StartSpan(c.Request.Context(), "CreateSubscriptionPlan")
+	defer span.End()
+
 	var req CreateSubscriptionPlanRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -422,3 +459,4 @@ func CreateSubscriptionPlan(c *gin.Context) {
 
 	c.JSON(http.StatusCreated, gin.H{"message": "Subscription plan created successfully", "plan_id": plan.ID})
 }
+

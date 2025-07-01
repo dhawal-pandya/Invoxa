@@ -3,12 +3,15 @@ module invoxa
 go 1.24.4
 
 require (
+	github.com/dhawal-pandya/aeonis/packages/tracer-sdk/go v0.2.0
 	github.com/gin-gonic/gin v1.10.1
-	github.com/stretchr/testify v1.9.0
+	github.com/stretchr/testify v1.10.0
 	golang.org/x/crypto v0.31.0
 	gorm.io/driver/postgres v1.6.0
 	gorm.io/gorm v1.30.0
 )
+
+require github.com/google/uuid v1.6.0 // indirect
 
 require (
 	github.com/bytedance/sonic v1.11.6 // indirect

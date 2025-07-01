@@ -20,16 +20,11 @@ type CreateUserRequest struct {
 }
 
 func CreateUser(c *gin.Context) {
+	_, span := Tracer.StartSpan(c.Request.Context(), "CreateUser")
+	defer span.End()
 	var req CreateUserRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	callerOrganizationID := c.GetUint64("callerOrganizationID")
-
-	if uint(callerOrganizationID) != req.OrganizationID {
-		c.JSON(http.StatusForbidden, gin.H{"error": "Unauthorized: Caller organization ID does not match target organization ID"})
 		return
 	}
 
