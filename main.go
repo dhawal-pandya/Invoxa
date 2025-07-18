@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	exporter := sdktracer.NewHTTPExporter("http://localhost:8000/v1/traces", "B3VPHj7JWL6RV6UDaW_S4IE3oIT5fFEAvbZQkKNN6fo")
+	exporter := sdktracer.NewHTTPExporter("http://localhost:8000/v1/traces", "YR48BH-GPY9ISJ0820Zs-y4h0z-xqy6gaoDFJc9I3AI")
 	sanitizer := sdktracer.NewPIISanitizer()
 	handlers.Tracer = sdktracer.NewTracerWithExporter("invoxa-test", exporter, sanitizer)
 
