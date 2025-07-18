@@ -3,7 +3,7 @@ module invoxa
 go 1.24.4
 
 require (
-	github.com/dhawal-pandya/aeonis/packages/tracer-sdk/go v0.2.0
+	github.com/dhawal-pandya/aeonis/packages/tracer-sdk/go v0.3.0
 	github.com/gin-gonic/gin v1.10.1
 	github.com/stretchr/testify v1.10.0
 	golang.org/x/crypto v0.31.0
