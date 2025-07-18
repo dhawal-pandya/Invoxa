@@ -30,7 +30,6 @@ func Subscribe(c *gin.Context) {
 		return
 	}
 
-	// Validate the request
 	out := Tracer.TraceFunc(c.Request.Context(), validateSubscriptionRequest, c, req)
 	if err, ok := out[0].(error); ok && err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -38,7 +37,6 @@ func Subscribe(c *gin.Context) {
 	}
 	plan := out[1].(models.SubscriptionPlan)
 
-	// Create the subscription
 	out = Tracer.TraceFunc(c.Request.Context(), createSubscription, req, plan)
 	if err, ok := out[0].(error); ok && err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -46,7 +44,6 @@ func Subscribe(c *gin.Context) {
 	}
 	subscription := out[1].(models.Subscription)
 
-	// Create the invoice
 	out = Tracer.TraceFunc(c.Request.Context(), createInvoice, req, plan)
 	if err, ok := out[0].(error); ok && err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

@@ -29,7 +29,6 @@ func ConnectDatabase() {
 
 	DB = db
 
-	// Auto-migrate models
 	log.Println("Running database migrations...")
 	err = DB.AutoMigrate(
 		&models.User{},
@@ -48,10 +47,9 @@ func ConnectDatabase() {
 }
 
 // ClearDBAndMigrate drops all tables and re-runs migrations.
-// This is primarily for development/testing purposes.
 func ClearDBAndMigrate() error {
+	// only for testing
 	log.Println("Clearing database...")
-	// Drop all tables
 	err := DB.Migrator().DropTable(
 		&models.User{},
 		&models.Organization{},
@@ -67,7 +65,6 @@ func ClearDBAndMigrate() error {
 	}
 
 	log.Println("Database cleared. Running migrations again...")
-	// Re-run migrations
 	err = DB.AutoMigrate(
 		&models.User{},
 		&models.Organization{},
