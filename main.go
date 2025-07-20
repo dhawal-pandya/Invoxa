@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"os"
 
 	"invoxa/database"
 	"invoxa/handlers"
@@ -11,9 +12,15 @@ import (
 )
 
 func main() {
-	exporter := sdktracer.NewHTTPExporter("http://localhost:8000/v1/traces", "YR48BH-GPY9ISJ0820Zs-y4h0z-xqy6gaoDFJc9I3AI")
+	apiKey := os.Getenv("AEONIS_API_KEY")
+	if apiKey == "" {
+		log.Fatal("AEONIS_API_KEY environment variable not set")
+	}
+
+	exporter := sdktracer.NewHTTPExporter("http://localhost:8000/v1/traces", apiKey)
 	sanitizer := sdktracer.NewPIISanitizer()
-	handlers.Tracer = sdktracer.NewTracerWithExporter("invoxa-test", exporter, sanitizer)
+	tracer := sdktracer.NewTracerWithExporter("invoxa-test", exporter, sanitizer)
+	handlers.SetTracer(tracer)
 
 	database.ConnectDatabase()
 
