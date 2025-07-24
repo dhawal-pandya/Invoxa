@@ -1,0 +1,469 @@
+2025/07/25 00:35:10 Running database migrations...
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[8.183ms] [34;1m[rows:1][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'organizations' AND table_type = 'BASE TABLE'
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.301ms] [34;1m[rows:1][0m SELECT CURRENT_DATABASE()
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[18.067ms] [34;1m[rows:-][0m SELECT c.column_name, c.is_nullable = 'YES', c.udt_name, c.character_maximum_length, c.numeric_precision, c.numeric_precision_radix, c.numeric_scale, c.datetime_precision, 8 * typlen, c.column_default, pd.description, c.identity_increment FROM information_schema.columns AS c JOIN pg_type AS pgt ON c.udt_name = pgt.typname LEFT JOIN pg_catalog.pg_description as pd ON pd.objsubid = c.ordinal_position AND pd.objoid = (SELECT oid FROM pg_catalog.pg_class WHERE relname = c.table_name AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = c.table_schema)) where table_catalog = 'invoxadb' AND table_schema = CURRENT_SCHEMA() AND table_name = 'organizations'
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.512ms] [34;1m[rows:-][0m SELECT * FROM "organizations" LIMIT 5
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[11.432ms] [34;1m[rows:-][0m SELECT constraint_name FROM information_schema.table_constraints tc JOIN information_schema.constraint_column_usage AS ccu USING (constraint_schema, constraint_catalog, table_name, constraint_name) JOIN information_schema.columns AS c ON c.table_schema = tc.constraint_schema AND tc.table_name = c.table_name AND ccu.column_name = c.column_name WHERE constraint_type IN ('PRIMARY KEY', 'UNIQUE') AND c.table_catalog = 'invoxadb' AND c.table_schema = CURRENT_SCHEMA() AND c.table_name = 'organizations' AND constraint_type = 'UNIQUE'
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[8.485ms] [34;1m[rows:-][0m SELECT c.column_name, constraint_name, constraint_type FROM information_schema.table_constraints tc JOIN information_schema.constraint_column_usage AS ccu USING (constraint_schema, constraint_catalog, table_name, constraint_name) JOIN information_schema.columns AS c ON c.table_schema = tc.constraint_schema AND tc.table_name = c.table_name AND ccu.column_name = c.column_name WHERE constraint_type IN ('PRIMARY KEY', 'UNIQUE') AND c.table_catalog = 'invoxadb' AND c.table_schema = CURRENT_SCHEMA() AND c.table_name = 'organizations'
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.503ms] [34;1m[rows:-][0m SELECT a.attname as column_name, format_type(a.atttypid, a.atttypmod) AS data_type
+		FROM pg_attribute a JOIN pg_class b ON a.attrelid = b.oid AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = CURRENT_SCHEMA())
+		WHERE a.attnum > 0 -- hide internal columns
+		AND NOT a.attisdropped -- hide deleted columns
+		AND b.relname = 'organizations'
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[2.015ms] [34;1m[rows:0][0m SELECT description FROM pg_catalog.pg_description WHERE objsubid = (SELECT ordinal_position FROM information_schema.columns WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'organizations' AND column_name = 'id') AND objoid = (SELECT oid FROM pg_catalog.pg_class WHERE relname = 'organizations' AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = CURRENT_SCHEMA()))
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[1.651ms] [34;1m[rows:0][0m SELECT description FROM pg_catalog.pg_description WHERE objsubid = (SELECT ordinal_position FROM information_schema.columns WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'organizations' AND column_name = 'created_at') AND objoid = (SELECT oid FROM pg_catalog.pg_class WHERE relname = 'organizations' AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = CURRENT_SCHEMA()))
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[1.542ms] [34;1m[rows:0][0m SELECT description FROM pg_catalog.pg_description WHERE objsubid = (SELECT ordinal_position FROM information_schema.columns WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'organizations' AND column_name = 'updated_at') AND objoid = (SELECT oid FROM pg_catalog.pg_class WHERE relname = 'organizations' AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = CURRENT_SCHEMA()))
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[1.184ms] [34;1m[rows:0][0m SELECT description FROM pg_catalog.pg_description WHERE objsubid = (SELECT ordinal_position FROM information_schema.columns WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'organizations' AND column_name = 'deleted_at') AND objoid = (SELECT oid FROM pg_catalog.pg_class WHERE relname = 'organizations' AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = CURRENT_SCHEMA()))
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[1.413ms] [34;1m[rows:0][0m SELECT description FROM pg_catalog.pg_description WHERE objsubid = (SELECT ordinal_position FROM information_schema.columns WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'organizations' AND column_name = 'name') AND objoid = (SELECT oid FROM pg_catalog.pg_class WHERE relname = 'organizations' AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = CURRENT_SCHEMA()))
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[1.339ms] [34;1m[rows:0][0m SELECT description FROM pg_catalog.pg_description WHERE objsubid = (SELECT ordinal_position FROM information_schema.columns WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'organizations' AND column_name = 'billing_email') AND objoid = (SELECT oid FROM pg_catalog.pg_class WHERE relname = 'organizations' AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = CURRENT_SCHEMA()))
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[1.248ms] [34;1m[rows:1][0m SELECT count(*) FROM pg_indexes WHERE tablename = 'organizations' AND indexname = 'idx_organizations_deleted_at' AND schemaname = CURRENT_SCHEMA()
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.338ms] [34;1m[rows:1][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'users' AND table_type = 'BASE TABLE'
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.151ms] [34;1m[rows:1][0m SELECT CURRENT_DATABASE()
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[3.554ms] [34;1m[rows:-][0m SELECT c.column_name, c.is_nullable = 'YES', c.udt_name, c.character_maximum_length, c.numeric_precision, c.numeric_precision_radix, c.numeric_scale, c.datetime_precision, 8 * typlen, c.column_default, pd.description, c.identity_increment FROM information_schema.columns AS c JOIN pg_type AS pgt ON c.udt_name = pgt.typname LEFT JOIN pg_catalog.pg_description as pd ON pd.objsubid = c.ordinal_position AND pd.objoid = (SELECT oid FROM pg_catalog.pg_class WHERE relname = c.table_name AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = c.table_schema)) where table_catalog = 'invoxadb' AND table_schema = CURRENT_SCHEMA() AND table_name = 'users'
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.365ms] [34;1m[rows:-][0m SELECT * FROM "users" LIMIT 5
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[6.533ms] [34;1m[rows:-][0m SELECT constraint_name FROM information_schema.table_constraints tc JOIN information_schema.constraint_column_usage AS ccu USING (constraint_schema, constraint_catalog, table_name, constraint_name) JOIN information_schema.columns AS c ON c.table_schema = tc.constraint_schema AND tc.table_name = c.table_name AND ccu.column_name = c.column_name WHERE constraint_type IN ('PRIMARY KEY', 'UNIQUE') AND c.table_catalog = 'invoxadb' AND c.table_schema = CURRENT_SCHEMA() AND c.table_name = 'users' AND constraint_type = 'UNIQUE'
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[6.266ms] [34;1m[rows:-][0m SELECT c.column_name, constraint_name, constraint_type FROM information_schema.table_constraints tc JOIN information_schema.constraint_column_usage AS ccu USING (constraint_schema, constraint_catalog, table_name, constraint_name) JOIN information_schema.columns AS c ON c.table_schema = tc.constraint_schema AND tc.table_name = c.table_name AND ccu.column_name = c.column_name WHERE constraint_type IN ('PRIMARY KEY', 'UNIQUE') AND c.table_catalog = 'invoxadb' AND c.table_schema = CURRENT_SCHEMA() AND c.table_name = 'users'
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.289ms] [34;1m[rows:-][0m SELECT a.attname as column_name, format_type(a.atttypid, a.atttypmod) AS data_type
+		FROM pg_attribute a JOIN pg_class b ON a.attrelid = b.oid AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = CURRENT_SCHEMA())
+		WHERE a.attnum > 0 -- hide internal columns
+		AND NOT a.attisdropped -- hide deleted columns
+		AND b.relname = 'users'
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.193ms] [34;1m[rows:0][0m SELECT description FROM pg_catalog.pg_description WHERE objsubid = (SELECT ordinal_position FROM information_schema.columns WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'users' AND column_name = 'id') AND objoid = (SELECT oid FROM pg_catalog.pg_class WHERE relname = 'users' AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = CURRENT_SCHEMA()))
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.217ms] [34;1m[rows:0][0m SELECT description FROM pg_catalog.pg_description WHERE objsubid = (SELECT ordinal_position FROM information_schema.columns WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'users' AND column_name = 'created_at') AND objoid = (SELECT oid FROM pg_catalog.pg_class WHERE relname = 'users' AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = CURRENT_SCHEMA()))
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.176ms] [34;1m[rows:0][0m SELECT description FROM pg_catalog.pg_description WHERE objsubid = (SELECT ordinal_position FROM information_schema.columns WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'users' AND column_name = 'updated_at') AND objoid = (SELECT oid FROM pg_catalog.pg_class WHERE relname = 'users' AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = CURRENT_SCHEMA()))
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.164ms] [34;1m[rows:0][0m SELECT description FROM pg_catalog.pg_description WHERE objsubid = (SELECT ordinal_position FROM information_schema.columns WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'users' AND column_name = 'deleted_at') AND objoid = (SELECT oid FROM pg_catalog.pg_class WHERE relname = 'users' AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = CURRENT_SCHEMA()))
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.160ms] [34;1m[rows:0][0m SELECT description FROM pg_catalog.pg_description WHERE objsubid = (SELECT ordinal_position FROM information_schema.columns WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'users' AND column_name = 'username') AND objoid = (SELECT oid FROM pg_catalog.pg_class WHERE relname = 'users' AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = CURRENT_SCHEMA()))
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.175ms] [34;1m[rows:0][0m SELECT description FROM pg_catalog.pg_description WHERE objsubid = (SELECT ordinal_position FROM information_schema.columns WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'users' AND column_name = 'email') AND objoid = (SELECT oid FROM pg_catalog.pg_class WHERE relname = 'users' AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = CURRENT_SCHEMA()))
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.180ms] [34;1m[rows:0][0m SELECT description FROM pg_catalog.pg_description WHERE objsubid = (SELECT ordinal_position FROM information_schema.columns WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'users' AND column_name = 'password_hash') AND objoid = (SELECT oid FROM pg_catalog.pg_class WHERE relname = 'users' AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = CURRENT_SCHEMA()))
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.166ms] [34;1m[rows:0][0m SELECT description FROM pg_catalog.pg_description WHERE objsubid = (SELECT ordinal_position FROM information_schema.columns WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'users' AND column_name = 'organization_id') AND objoid = (SELECT oid FROM pg_catalog.pg_class WHERE relname = 'users' AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = CURRENT_SCHEMA()))
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.859ms] [34;1m[rows:1][0m SELECT count(*) FROM INFORMATION_SCHEMA.table_constraints WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'users' AND constraint_name = 'fk_organizations_users'
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.446ms] [34;1m[rows:1][0m SELECT count(*) FROM pg_indexes WHERE tablename = 'users' AND indexname = 'idx_users_deleted_at' AND schemaname = CURRENT_SCHEMA()
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.389ms] [34;1m[rows:1][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'subscription_plans' AND table_type = 'BASE TABLE'
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.089ms] [34;1m[rows:1][0m SELECT CURRENT_DATABASE()
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[3.694ms] [34;1m[rows:-][0m SELECT c.column_name, c.is_nullable = 'YES', c.udt_name, c.character_maximum_length, c.numeric_precision, c.numeric_precision_radix, c.numeric_scale, c.datetime_precision, 8 * typlen, c.column_default, pd.description, c.identity_increment FROM information_schema.columns AS c JOIN pg_type AS pgt ON c.udt_name = pgt.typname LEFT JOIN pg_catalog.pg_description as pd ON pd.objsubid = c.ordinal_position AND pd.objoid = (SELECT oid FROM pg_catalog.pg_class WHERE relname = c.table_name AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = c.table_schema)) where table_catalog = 'invoxadb' AND table_schema = CURRENT_SCHEMA() AND table_name = 'subscription_plans'
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.472ms] [34;1m[rows:-][0m SELECT * FROM "subscription_plans" LIMIT 5
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[5.174ms] [34;1m[rows:-][0m SELECT constraint_name FROM information_schema.table_constraints tc JOIN information_schema.constraint_column_usage AS ccu USING (constraint_schema, constraint_catalog, table_name, constraint_name) JOIN information_schema.columns AS c ON c.table_schema = tc.constraint_schema AND tc.table_name = c.table_name AND ccu.column_name = c.column_name WHERE constraint_type IN ('PRIMARY KEY', 'UNIQUE') AND c.table_catalog = 'invoxadb' AND c.table_schema = CURRENT_SCHEMA() AND c.table_name = 'subscription_plans' AND constraint_type = 'UNIQUE'
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[4.645ms] [34;1m[rows:-][0m SELECT c.column_name, constraint_name, constraint_type FROM information_schema.table_constraints tc JOIN information_schema.constraint_column_usage AS ccu USING (constraint_schema, constraint_catalog, table_name, constraint_name) JOIN information_schema.columns AS c ON c.table_schema = tc.constraint_schema AND tc.table_name = c.table_name AND ccu.column_name = c.column_name WHERE constraint_type IN ('PRIMARY KEY', 'UNIQUE') AND c.table_catalog = 'invoxadb' AND c.table_schema = CURRENT_SCHEMA() AND c.table_name = 'subscription_plans'
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.239ms] [34;1m[rows:-][0m SELECT a.attname as column_name, format_type(a.atttypid, a.atttypmod) AS data_type
+		FROM pg_attribute a JOIN pg_class b ON a.attrelid = b.oid AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = CURRENT_SCHEMA())
+		WHERE a.attnum > 0 -- hide internal columns
+		AND NOT a.attisdropped -- hide deleted columns
+		AND b.relname = 'subscription_plans'
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.193ms] [34;1m[rows:0][0m SELECT description FROM pg_catalog.pg_description WHERE objsubid = (SELECT ordinal_position FROM information_schema.columns WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'subscription_plans' AND column_name = 'id') AND objoid = (SELECT oid FROM pg_catalog.pg_class WHERE relname = 'subscription_plans' AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = CURRENT_SCHEMA()))
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.180ms] [34;1m[rows:0][0m SELECT description FROM pg_catalog.pg_description WHERE objsubid = (SELECT ordinal_position FROM information_schema.columns WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'subscription_plans' AND column_name = 'created_at') AND objoid = (SELECT oid FROM pg_catalog.pg_class WHERE relname = 'subscription_plans' AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = CURRENT_SCHEMA()))
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.165ms] [34;1m[rows:0][0m SELECT description FROM pg_catalog.pg_description WHERE objsubid = (SELECT ordinal_position FROM information_schema.columns WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'subscription_plans' AND column_name = 'updated_at') AND objoid = (SELECT oid FROM pg_catalog.pg_class WHERE relname = 'subscription_plans' AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = CURRENT_SCHEMA()))
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.160ms] [34;1m[rows:0][0m SELECT description FROM pg_catalog.pg_description WHERE objsubid = (SELECT ordinal_position FROM information_schema.columns WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'subscription_plans' AND column_name = 'deleted_at') AND objoid = (SELECT oid FROM pg_catalog.pg_class WHERE relname = 'subscription_plans' AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = CURRENT_SCHEMA()))
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.170ms] [34;1m[rows:0][0m SELECT description FROM pg_catalog.pg_description WHERE objsubid = (SELECT ordinal_position FROM information_schema.columns WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'subscription_plans' AND column_name = 'name') AND objoid = (SELECT oid FROM pg_catalog.pg_class WHERE relname = 'subscription_plans' AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = CURRENT_SCHEMA()))
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.172ms] [34;1m[rows:0][0m SELECT description FROM pg_catalog.pg_description WHERE objsubid = (SELECT ordinal_position FROM information_schema.columns WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'subscription_plans' AND column_name = 'description') AND objoid = (SELECT oid FROM pg_catalog.pg_class WHERE relname = 'subscription_plans' AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = CURRENT_SCHEMA()))
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.154ms] [34;1m[rows:0][0m SELECT description FROM pg_catalog.pg_description WHERE objsubid = (SELECT ordinal_position FROM information_schema.columns WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'subscription_plans' AND column_name = 'price') AND objoid = (SELECT oid FROM pg_catalog.pg_class WHERE relname = 'subscription_plans' AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = CURRENT_SCHEMA()))
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.169ms] [34;1m[rows:0][0m SELECT description FROM pg_catalog.pg_description WHERE objsubid = (SELECT ordinal_position FROM information_schema.columns WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'subscription_plans' AND column_name = 'currency') AND objoid = (SELECT oid FROM pg_catalog.pg_class WHERE relname = 'subscription_plans' AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = CURRENT_SCHEMA()))
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.151ms] [34;1m[rows:0][0m SELECT description FROM pg_catalog.pg_description WHERE objsubid = (SELECT ordinal_position FROM information_schema.columns WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'subscription_plans' AND column_name = 'interval') AND objoid = (SELECT oid FROM pg_catalog.pg_class WHERE relname = 'subscription_plans' AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = CURRENT_SCHEMA()))
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.156ms] [34;1m[rows:0][0m SELECT description FROM pg_catalog.pg_description WHERE objsubid = (SELECT ordinal_position FROM information_schema.columns WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'subscription_plans' AND column_name = 'organization_id') AND objoid = (SELECT oid FROM pg_catalog.pg_class WHERE relname = 'subscription_plans' AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = CURRENT_SCHEMA()))
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.622ms] [34;1m[rows:1][0m SELECT count(*) FROM INFORMATION_SCHEMA.table_constraints WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'subscription_plans' AND constraint_name = 'fk_organizations_subscription_plans'
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.414ms] [34;1m[rows:1][0m SELECT count(*) FROM pg_indexes WHERE tablename = 'subscription_plans' AND indexname = 'idx_subscription_plans_deleted_at' AND schemaname = CURRENT_SCHEMA()
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.373ms] [34;1m[rows:1][0m SELECT count(*) FROM pg_indexes WHERE tablename = 'subscription_plans' AND indexname = 'idx_org_plan_name' AND schemaname = CURRENT_SCHEMA()
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.322ms] [34;1m[rows:1][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'subscriptions' AND table_type = 'BASE TABLE'
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.073ms] [34;1m[rows:1][0m SELECT CURRENT_DATABASE()
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[2.941ms] [34;1m[rows:-][0m SELECT c.column_name, c.is_nullable = 'YES', c.udt_name, c.character_maximum_length, c.numeric_precision, c.numeric_precision_radix, c.numeric_scale, c.datetime_precision, 8 * typlen, c.column_default, pd.description, c.identity_increment FROM information_schema.columns AS c JOIN pg_type AS pgt ON c.udt_name = pgt.typname LEFT JOIN pg_catalog.pg_description as pd ON pd.objsubid = c.ordinal_position AND pd.objoid = (SELECT oid FROM pg_catalog.pg_class WHERE relname = c.table_name AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = c.table_schema)) where table_catalog = 'invoxadb' AND table_schema = CURRENT_SCHEMA() AND table_name = 'subscriptions'
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.276ms] [34;1m[rows:-][0m SELECT * FROM "subscriptions" LIMIT 5
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[4.025ms] [34;1m[rows:-][0m SELECT constraint_name FROM information_schema.table_constraints tc JOIN information_schema.constraint_column_usage AS ccu USING (constraint_schema, constraint_catalog, table_name, constraint_name) JOIN information_schema.columns AS c ON c.table_schema = tc.constraint_schema AND tc.table_name = c.table_name AND ccu.column_name = c.column_name WHERE constraint_type IN ('PRIMARY KEY', 'UNIQUE') AND c.table_catalog = 'invoxadb' AND c.table_schema = CURRENT_SCHEMA() AND c.table_name = 'subscriptions' AND constraint_type = 'UNIQUE'
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[3.708ms] [34;1m[rows:-][0m SELECT c.column_name, constraint_name, constraint_type FROM information_schema.table_constraints tc JOIN information_schema.constraint_column_usage AS ccu USING (constraint_schema, constraint_catalog, table_name, constraint_name) JOIN information_schema.columns AS c ON c.table_schema = tc.constraint_schema AND tc.table_name = c.table_name AND ccu.column_name = c.column_name WHERE constraint_type IN ('PRIMARY KEY', 'UNIQUE') AND c.table_catalog = 'invoxadb' AND c.table_schema = CURRENT_SCHEMA() AND c.table_name = 'subscriptions'
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.210ms] [34;1m[rows:-][0m SELECT a.attname as column_name, format_type(a.atttypid, a.atttypmod) AS data_type
+		FROM pg_attribute a JOIN pg_class b ON a.attrelid = b.oid AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = CURRENT_SCHEMA())
+		WHERE a.attnum > 0 -- hide internal columns
+		AND NOT a.attisdropped -- hide deleted columns
+		AND b.relname = 'subscriptions'
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.159ms] [34;1m[rows:0][0m SELECT description FROM pg_catalog.pg_description WHERE objsubid = (SELECT ordinal_position FROM information_schema.columns WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'subscriptions' AND column_name = 'id') AND objoid = (SELECT oid FROM pg_catalog.pg_class WHERE relname = 'subscriptions' AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = CURRENT_SCHEMA()))
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.141ms] [34;1m[rows:0][0m SELECT description FROM pg_catalog.pg_description WHERE objsubid = (SELECT ordinal_position FROM information_schema.columns WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'subscriptions' AND column_name = 'created_at') AND objoid = (SELECT oid FROM pg_catalog.pg_class WHERE relname = 'subscriptions' AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = CURRENT_SCHEMA()))
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.148ms] [34;1m[rows:0][0m SELECT description FROM pg_catalog.pg_description WHERE objsubid = (SELECT ordinal_position FROM information_schema.columns WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'subscriptions' AND column_name = 'updated_at') AND objoid = (SELECT oid FROM pg_catalog.pg_class WHERE relname = 'subscriptions' AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = CURRENT_SCHEMA()))
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.133ms] [34;1m[rows:0][0m SELECT description FROM pg_catalog.pg_description WHERE objsubid = (SELECT ordinal_position FROM information_schema.columns WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'subscriptions' AND column_name = 'deleted_at') AND objoid = (SELECT oid FROM pg_catalog.pg_class WHERE relname = 'subscriptions' AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = CURRENT_SCHEMA()))
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.136ms] [34;1m[rows:0][0m SELECT description FROM pg_catalog.pg_description WHERE objsubid = (SELECT ordinal_position FROM information_schema.columns WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'subscriptions' AND column_name = 'organization_id') AND objoid = (SELECT oid FROM pg_catalog.pg_class WHERE relname = 'subscriptions' AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = CURRENT_SCHEMA()))
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.143ms] [34;1m[rows:0][0m SELECT description FROM pg_catalog.pg_description WHERE objsubid = (SELECT ordinal_position FROM information_schema.columns WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'subscriptions' AND column_name = 'subscription_plan_id') AND objoid = (SELECT oid FROM pg_catalog.pg_class WHERE relname = 'subscriptions' AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = CURRENT_SCHEMA()))
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.129ms] [34;1m[rows:0][0m SELECT description FROM pg_catalog.pg_description WHERE objsubid = (SELECT ordinal_position FROM information_schema.columns WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'subscriptions' AND column_name = 'start_date') AND objoid = (SELECT oid FROM pg_catalog.pg_class WHERE relname = 'subscriptions' AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = CURRENT_SCHEMA()))
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.145ms] [34;1m[rows:0][0m SELECT description FROM pg_catalog.pg_description WHERE objsubid = (SELECT ordinal_position FROM information_schema.columns WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'subscriptions' AND column_name = 'end_date') AND objoid = (SELECT oid FROM pg_catalog.pg_class WHERE relname = 'subscriptions' AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = CURRENT_SCHEMA()))
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.133ms] [34;1m[rows:0][0m SELECT description FROM pg_catalog.pg_description WHERE objsubid = (SELECT ordinal_position FROM information_schema.columns WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'subscriptions' AND column_name = 'is_active') AND objoid = (SELECT oid FROM pg_catalog.pg_class WHERE relname = 'subscriptions' AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = CURRENT_SCHEMA()))
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.503ms] [34;1m[rows:1][0m SELECT count(*) FROM INFORMATION_SCHEMA.table_constraints WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'subscriptions' AND constraint_name = 'fk_organizations_subscriptions'
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.486ms] [34;1m[rows:1][0m SELECT count(*) FROM INFORMATION_SCHEMA.table_constraints WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'subscriptions' AND constraint_name = 'fk_subscription_plans_subscriptions'
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.346ms] [34;1m[rows:1][0m SELECT count(*) FROM pg_indexes WHERE tablename = 'subscriptions' AND indexname = 'idx_subscriptions_deleted_at' AND schemaname = CURRENT_SCHEMA()
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.279ms] [34;1m[rows:1][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'invoices' AND table_type = 'BASE TABLE'
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.095ms] [34;1m[rows:1][0m SELECT CURRENT_DATABASE()
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[4.886ms] [34;1m[rows:-][0m SELECT c.column_name, c.is_nullable = 'YES', c.udt_name, c.character_maximum_length, c.numeric_precision, c.numeric_precision_radix, c.numeric_scale, c.datetime_precision, 8 * typlen, c.column_default, pd.description, c.identity_increment FROM information_schema.columns AS c JOIN pg_type AS pgt ON c.udt_name = pgt.typname LEFT JOIN pg_catalog.pg_description as pd ON pd.objsubid = c.ordinal_position AND pd.objoid = (SELECT oid FROM pg_catalog.pg_class WHERE relname = c.table_name AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = c.table_schema)) where table_catalog = 'invoxadb' AND table_schema = CURRENT_SCHEMA() AND table_name = 'invoices'
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.228ms] [34;1m[rows:-][0m SELECT * FROM "invoices" LIMIT 5
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[3.699ms] [34;1m[rows:-][0m SELECT constraint_name FROM information_schema.table_constraints tc JOIN information_schema.constraint_column_usage AS ccu USING (constraint_schema, constraint_catalog, table_name, constraint_name) JOIN information_schema.columns AS c ON c.table_schema = tc.constraint_schema AND tc.table_name = c.table_name AND ccu.column_name = c.column_name WHERE constraint_type IN ('PRIMARY KEY', 'UNIQUE') AND c.table_catalog = 'invoxadb' AND c.table_schema = CURRENT_SCHEMA() AND c.table_name = 'invoices' AND constraint_type = 'UNIQUE'
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[3.451ms] [34;1m[rows:-][0m SELECT c.column_name, constraint_name, constraint_type FROM information_schema.table_constraints tc JOIN information_schema.constraint_column_usage AS ccu USING (constraint_schema, constraint_catalog, table_name, constraint_name) JOIN information_schema.columns AS c ON c.table_schema = tc.constraint_schema AND tc.table_name = c.table_name AND ccu.column_name = c.column_name WHERE constraint_type IN ('PRIMARY KEY', 'UNIQUE') AND c.table_catalog = 'invoxadb' AND c.table_schema = CURRENT_SCHEMA() AND c.table_name = 'invoices'
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.182ms] [34;1m[rows:-][0m SELECT a.attname as column_name, format_type(a.atttypid, a.atttypmod) AS data_type
+		FROM pg_attribute a JOIN pg_class b ON a.attrelid = b.oid AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = CURRENT_SCHEMA())
+		WHERE a.attnum > 0 -- hide internal columns
+		AND NOT a.attisdropped -- hide deleted columns
+		AND b.relname = 'invoices'
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.173ms] [34;1m[rows:0][0m SELECT description FROM pg_catalog.pg_description WHERE objsubid = (SELECT ordinal_position FROM information_schema.columns WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'invoices' AND column_name = 'id') AND objoid = (SELECT oid FROM pg_catalog.pg_class WHERE relname = 'invoices' AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = CURRENT_SCHEMA()))
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.156ms] [34;1m[rows:0][0m SELECT description FROM pg_catalog.pg_description WHERE objsubid = (SELECT ordinal_position FROM information_schema.columns WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'invoices' AND column_name = 'created_at') AND objoid = (SELECT oid FROM pg_catalog.pg_class WHERE relname = 'invoices' AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = CURRENT_SCHEMA()))
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.146ms] [34;1m[rows:0][0m SELECT description FROM pg_catalog.pg_description WHERE objsubid = (SELECT ordinal_position FROM information_schema.columns WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'invoices' AND column_name = 'updated_at') AND objoid = (SELECT oid FROM pg_catalog.pg_class WHERE relname = 'invoices' AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = CURRENT_SCHEMA()))
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.142ms] [34;1m[rows:0][0m SELECT description FROM pg_catalog.pg_description WHERE objsubid = (SELECT ordinal_position FROM information_schema.columns WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'invoices' AND column_name = 'deleted_at') AND objoid = (SELECT oid FROM pg_catalog.pg_class WHERE relname = 'invoices' AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = CURRENT_SCHEMA()))
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.132ms] [34;1m[rows:0][0m SELECT description FROM pg_catalog.pg_description WHERE objsubid = (SELECT ordinal_position FROM information_schema.columns WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'invoices' AND column_name = 'organization_id') AND objoid = (SELECT oid FROM pg_catalog.pg_class WHERE relname = 'invoices' AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = CURRENT_SCHEMA()))
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.140ms] [34;1m[rows:0][0m SELECT description FROM pg_catalog.pg_description WHERE objsubid = (SELECT ordinal_position FROM information_schema.columns WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'invoices' AND column_name = 'user_id') AND objoid = (SELECT oid FROM pg_catalog.pg_class WHERE relname = 'invoices' AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = CURRENT_SCHEMA()))
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.140ms] [34;1m[rows:0][0m SELECT description FROM pg_catalog.pg_description WHERE objsubid = (SELECT ordinal_position FROM information_schema.columns WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'invoices' AND column_name = 'amount') AND objoid = (SELECT oid FROM pg_catalog.pg_class WHERE relname = 'invoices' AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = CURRENT_SCHEMA()))
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.140ms] [34;1m[rows:0][0m SELECT description FROM pg_catalog.pg_description WHERE objsubid = (SELECT ordinal_position FROM information_schema.columns WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'invoices' AND column_name = 'currency') AND objoid = (SELECT oid FROM pg_catalog.pg_class WHERE relname = 'invoices' AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = CURRENT_SCHEMA()))
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.136ms] [34;1m[rows:0][0m SELECT description FROM pg_catalog.pg_description WHERE objsubid = (SELECT ordinal_position FROM information_schema.columns WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'invoices' AND column_name = 'issue_date') AND objoid = (SELECT oid FROM pg_catalog.pg_class WHERE relname = 'invoices' AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = CURRENT_SCHEMA()))
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.140ms] [34;1m[rows:0][0m SELECT description FROM pg_catalog.pg_description WHERE objsubid = (SELECT ordinal_position FROM information_schema.columns WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'invoices' AND column_name = 'due_date') AND objoid = (SELECT oid FROM pg_catalog.pg_class WHERE relname = 'invoices' AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = CURRENT_SCHEMA()))
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.143ms] [34;1m[rows:0][0m SELECT description FROM pg_catalog.pg_description WHERE objsubid = (SELECT ordinal_position FROM information_schema.columns WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'invoices' AND column_name = 'paid') AND objoid = (SELECT oid FROM pg_catalog.pg_class WHERE relname = 'invoices' AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = CURRENT_SCHEMA()))
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.456ms] [34;1m[rows:1][0m SELECT count(*) FROM INFORMATION_SCHEMA.table_constraints WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'invoices' AND constraint_name = 'fk_organizations_invoices'
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.427ms] [34;1m[rows:1][0m SELECT count(*) FROM INFORMATION_SCHEMA.table_constraints WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'invoices' AND constraint_name = 'fk_users_invoices'
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.339ms] [34;1m[rows:1][0m SELECT count(*) FROM pg_indexes WHERE tablename = 'invoices' AND indexname = 'idx_invoices_deleted_at' AND schemaname = CURRENT_SCHEMA()
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.244ms] [34;1m[rows:1][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'payments' AND table_type = 'BASE TABLE'
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.076ms] [34;1m[rows:1][0m SELECT CURRENT_DATABASE()
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[2.295ms] [34;1m[rows:-][0m SELECT c.column_name, c.is_nullable = 'YES', c.udt_name, c.character_maximum_length, c.numeric_precision, c.numeric_precision_radix, c.numeric_scale, c.datetime_precision, 8 * typlen, c.column_default, pd.description, c.identity_increment FROM information_schema.columns AS c JOIN pg_type AS pgt ON c.udt_name = pgt.typname LEFT JOIN pg_catalog.pg_description as pd ON pd.objsubid = c.ordinal_position AND pd.objoid = (SELECT oid FROM pg_catalog.pg_class WHERE relname = c.table_name AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = c.table_schema)) where table_catalog = 'invoxadb' AND table_schema = CURRENT_SCHEMA() AND table_name = 'payments'
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.259ms] [34;1m[rows:-][0m SELECT * FROM "payments" LIMIT 5
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[3.207ms] [34;1m[rows:-][0m SELECT constraint_name FROM information_schema.table_constraints tc JOIN information_schema.constraint_column_usage AS ccu USING (constraint_schema, constraint_catalog, table_name, constraint_name) JOIN information_schema.columns AS c ON c.table_schema = tc.constraint_schema AND tc.table_name = c.table_name AND ccu.column_name = c.column_name WHERE constraint_type IN ('PRIMARY KEY', 'UNIQUE') AND c.table_catalog = 'invoxadb' AND c.table_schema = CURRENT_SCHEMA() AND c.table_name = 'payments' AND constraint_type = 'UNIQUE'
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[3.383ms] [34;1m[rows:-][0m SELECT c.column_name, constraint_name, constraint_type FROM information_schema.table_constraints tc JOIN information_schema.constraint_column_usage AS ccu USING (constraint_schema, constraint_catalog, table_name, constraint_name) JOIN information_schema.columns AS c ON c.table_schema = tc.constraint_schema AND tc.table_name = c.table_name AND ccu.column_name = c.column_name WHERE constraint_type IN ('PRIMARY KEY', 'UNIQUE') AND c.table_catalog = 'invoxadb' AND c.table_schema = CURRENT_SCHEMA() AND c.table_name = 'payments'
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.187ms] [34;1m[rows:-][0m SELECT a.attname as column_name, format_type(a.atttypid, a.atttypmod) AS data_type
+		FROM pg_attribute a JOIN pg_class b ON a.attrelid = b.oid AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = CURRENT_SCHEMA())
+		WHERE a.attnum > 0 -- hide internal columns
+		AND NOT a.attisdropped -- hide deleted columns
+		AND b.relname = 'payments'
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.154ms] [34;1m[rows:0][0m SELECT description FROM pg_catalog.pg_description WHERE objsubid = (SELECT ordinal_position FROM information_schema.columns WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'payments' AND column_name = 'id') AND objoid = (SELECT oid FROM pg_catalog.pg_class WHERE relname = 'payments' AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = CURRENT_SCHEMA()))
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.139ms] [34;1m[rows:0][0m SELECT description FROM pg_catalog.pg_description WHERE objsubid = (SELECT ordinal_position FROM information_schema.columns WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'payments' AND column_name = 'created_at') AND objoid = (SELECT oid FROM pg_catalog.pg_class WHERE relname = 'payments' AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = CURRENT_SCHEMA()))
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.142ms] [34;1m[rows:0][0m SELECT description FROM pg_catalog.pg_description WHERE objsubid = (SELECT ordinal_position FROM information_schema.columns WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'payments' AND column_name = 'updated_at') AND objoid = (SELECT oid FROM pg_catalog.pg_class WHERE relname = 'payments' AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = CURRENT_SCHEMA()))
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.145ms] [34;1m[rows:0][0m SELECT description FROM pg_catalog.pg_description WHERE objsubid = (SELECT ordinal_position FROM information_schema.columns WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'payments' AND column_name = 'deleted_at') AND objoid = (SELECT oid FROM pg_catalog.pg_class WHERE relname = 'payments' AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = CURRENT_SCHEMA()))
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.143ms] [34;1m[rows:0][0m SELECT description FROM pg_catalog.pg_description WHERE objsubid = (SELECT ordinal_position FROM information_schema.columns WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'payments' AND column_name = 'invoice_id') AND objoid = (SELECT oid FROM pg_catalog.pg_class WHERE relname = 'payments' AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = CURRENT_SCHEMA()))
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.146ms] [34;1m[rows:0][0m SELECT description FROM pg_catalog.pg_description WHERE objsubid = (SELECT ordinal_position FROM information_schema.columns WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'payments' AND column_name = 'user_id') AND objoid = (SELECT oid FROM pg_catalog.pg_class WHERE relname = 'payments' AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = CURRENT_SCHEMA()))
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.138ms] [34;1m[rows:0][0m SELECT description FROM pg_catalog.pg_description WHERE objsubid = (SELECT ordinal_position FROM information_schema.columns WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'payments' AND column_name = 'amount') AND objoid = (SELECT oid FROM pg_catalog.pg_class WHERE relname = 'payments' AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = CURRENT_SCHEMA()))
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.146ms] [34;1m[rows:0][0m SELECT description FROM pg_catalog.pg_description WHERE objsubid = (SELECT ordinal_position FROM information_schema.columns WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'payments' AND column_name = 'currency') AND objoid = (SELECT oid FROM pg_catalog.pg_class WHERE relname = 'payments' AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = CURRENT_SCHEMA()))
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.149ms] [34;1m[rows:0][0m SELECT description FROM pg_catalog.pg_description WHERE objsubid = (SELECT ordinal_position FROM information_schema.columns WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'payments' AND column_name = 'payment_date') AND objoid = (SELECT oid FROM pg_catalog.pg_class WHERE relname = 'payments' AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = CURRENT_SCHEMA()))
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.136ms] [34;1m[rows:0][0m SELECT description FROM pg_catalog.pg_description WHERE objsubid = (SELECT ordinal_position FROM information_schema.columns WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'payments' AND column_name = 'transaction_id') AND objoid = (SELECT oid FROM pg_catalog.pg_class WHERE relname = 'payments' AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = CURRENT_SCHEMA()))
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.137ms] [34;1m[rows:0][0m SELECT description FROM pg_catalog.pg_description WHERE objsubid = (SELECT ordinal_position FROM information_schema.columns WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'payments' AND column_name = 'payment_method') AND objoid = (SELECT oid FROM pg_catalog.pg_class WHERE relname = 'payments' AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = CURRENT_SCHEMA()))
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.149ms] [34;1m[rows:1][0m SELECT count(*) FROM INFORMATION_SCHEMA.table_constraints WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'payments' AND constraint_name = 'fk_invoices_payments'
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.136ms] [34;1m[rows:1][0m SELECT count(*) FROM INFORMATION_SCHEMA.table_constraints WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'payments' AND constraint_name = 'fk_users_payments'
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.125ms] [34;1m[rows:1][0m SELECT count(*) FROM pg_indexes WHERE tablename = 'payments' AND indexname = 'idx_payments_deleted_at' AND schemaname = CURRENT_SCHEMA()
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.077ms] [34;1m[rows:1][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'refunds' AND table_type = 'BASE TABLE'
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.079ms] [34;1m[rows:1][0m SELECT CURRENT_DATABASE()
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.639ms] [34;1m[rows:-][0m SELECT c.column_name, c.is_nullable = 'YES', c.udt_name, c.character_maximum_length, c.numeric_precision, c.numeric_precision_radix, c.numeric_scale, c.datetime_precision, 8 * typlen, c.column_default, pd.description, c.identity_increment FROM information_schema.columns AS c JOIN pg_type AS pgt ON c.udt_name = pgt.typname LEFT JOIN pg_catalog.pg_description as pd ON pd.objsubid = c.ordinal_position AND pd.objoid = (SELECT oid FROM pg_catalog.pg_class WHERE relname = c.table_name AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = c.table_schema)) where table_catalog = 'invoxadb' AND table_schema = CURRENT_SCHEMA() AND table_name = 'refunds'
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.250ms] [34;1m[rows:-][0m SELECT * FROM "refunds" LIMIT 5
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.675ms] [34;1m[rows:-][0m SELECT constraint_name FROM information_schema.table_constraints tc JOIN information_schema.constraint_column_usage AS ccu USING (constraint_schema, constraint_catalog, table_name, constraint_name) JOIN information_schema.columns AS c ON c.table_schema = tc.constraint_schema AND tc.table_name = c.table_name AND ccu.column_name = c.column_name WHERE constraint_type IN ('PRIMARY KEY', 'UNIQUE') AND c.table_catalog = 'invoxadb' AND c.table_schema = CURRENT_SCHEMA() AND c.table_name = 'refunds' AND constraint_type = 'UNIQUE'
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.602ms] [34;1m[rows:-][0m SELECT c.column_name, constraint_name, constraint_type FROM information_schema.table_constraints tc JOIN information_schema.constraint_column_usage AS ccu USING (constraint_schema, constraint_catalog, table_name, constraint_name) JOIN information_schema.columns AS c ON c.table_schema = tc.constraint_schema AND tc.table_name = c.table_name AND ccu.column_name = c.column_name WHERE constraint_type IN ('PRIMARY KEY', 'UNIQUE') AND c.table_catalog = 'invoxadb' AND c.table_schema = CURRENT_SCHEMA() AND c.table_name = 'refunds'
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.097ms] [34;1m[rows:-][0m SELECT a.attname as column_name, format_type(a.atttypid, a.atttypmod) AS data_type
+		FROM pg_attribute a JOIN pg_class b ON a.attrelid = b.oid AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = CURRENT_SCHEMA())
+		WHERE a.attnum > 0 -- hide internal columns
+		AND NOT a.attisdropped -- hide deleted columns
+		AND b.relname = 'refunds'
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.125ms] [34;1m[rows:0][0m SELECT description FROM pg_catalog.pg_description WHERE objsubid = (SELECT ordinal_position FROM information_schema.columns WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'refunds' AND column_name = 'id') AND objoid = (SELECT oid FROM pg_catalog.pg_class WHERE relname = 'refunds' AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = CURRENT_SCHEMA()))
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.137ms] [34;1m[rows:0][0m SELECT description FROM pg_catalog.pg_description WHERE objsubid = (SELECT ordinal_position FROM information_schema.columns WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'refunds' AND column_name = 'created_at') AND objoid = (SELECT oid FROM pg_catalog.pg_class WHERE relname = 'refunds' AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = CURRENT_SCHEMA()))
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.140ms] [34;1m[rows:0][0m SELECT description FROM pg_catalog.pg_description WHERE objsubid = (SELECT ordinal_position FROM information_schema.columns WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'refunds' AND column_name = 'updated_at') AND objoid = (SELECT oid FROM pg_catalog.pg_class WHERE relname = 'refunds' AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = CURRENT_SCHEMA()))
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.143ms] [34;1m[rows:0][0m SELECT description FROM pg_catalog.pg_description WHERE objsubid = (SELECT ordinal_position FROM information_schema.columns WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'refunds' AND column_name = 'deleted_at') AND objoid = (SELECT oid FROM pg_catalog.pg_class WHERE relname = 'refunds' AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = CURRENT_SCHEMA()))
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.141ms] [34;1m[rows:0][0m SELECT description FROM pg_catalog.pg_description WHERE objsubid = (SELECT ordinal_position FROM information_schema.columns WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'refunds' AND column_name = 'invoice_id') AND objoid = (SELECT oid FROM pg_catalog.pg_class WHERE relname = 'refunds' AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = CURRENT_SCHEMA()))
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.125ms] [34;1m[rows:0][0m SELECT description FROM pg_catalog.pg_description WHERE objsubid = (SELECT ordinal_position FROM information_schema.columns WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'refunds' AND column_name = 'payment_id') AND objoid = (SELECT oid FROM pg_catalog.pg_class WHERE relname = 'refunds' AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = CURRENT_SCHEMA()))
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.116ms] [34;1m[rows:0][0m SELECT description FROM pg_catalog.pg_description WHERE objsubid = (SELECT ordinal_position FROM information_schema.columns WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'refunds' AND column_name = 'user_id') AND objoid = (SELECT oid FROM pg_catalog.pg_class WHERE relname = 'refunds' AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = CURRENT_SCHEMA()))
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.129ms] [34;1m[rows:0][0m SELECT description FROM pg_catalog.pg_description WHERE objsubid = (SELECT ordinal_position FROM information_schema.columns WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'refunds' AND column_name = 'amount') AND objoid = (SELECT oid FROM pg_catalog.pg_class WHERE relname = 'refunds' AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = CURRENT_SCHEMA()))
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.142ms] [34;1m[rows:0][0m SELECT description FROM pg_catalog.pg_description WHERE objsubid = (SELECT ordinal_position FROM information_schema.columns WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'refunds' AND column_name = 'currency') AND objoid = (SELECT oid FROM pg_catalog.pg_class WHERE relname = 'refunds' AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = CURRENT_SCHEMA()))
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.123ms] [34;1m[rows:0][0m SELECT description FROM pg_catalog.pg_description WHERE objsubid = (SELECT ordinal_position FROM information_schema.columns WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'refunds' AND column_name = 'refund_date') AND objoid = (SELECT oid FROM pg_catalog.pg_class WHERE relname = 'refunds' AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = CURRENT_SCHEMA()))
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.116ms] [34;1m[rows:0][0m SELECT description FROM pg_catalog.pg_description WHERE objsubid = (SELECT ordinal_position FROM information_schema.columns WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'refunds' AND column_name = 'transaction_id') AND objoid = (SELECT oid FROM pg_catalog.pg_class WHERE relname = 'refunds' AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = CURRENT_SCHEMA()))
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.116ms] [34;1m[rows:0][0m SELECT description FROM pg_catalog.pg_description WHERE objsubid = (SELECT ordinal_position FROM information_schema.columns WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'refunds' AND column_name = 'reason') AND objoid = (SELECT oid FROM pg_catalog.pg_class WHERE relname = 'refunds' AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = CURRENT_SCHEMA()))
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.124ms] [34;1m[rows:1][0m SELECT count(*) FROM INFORMATION_SCHEMA.table_constraints WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'refunds' AND constraint_name = 'fk_refunds_payment'
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.142ms] [34;1m[rows:1][0m SELECT count(*) FROM INFORMATION_SCHEMA.table_constraints WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'refunds' AND constraint_name = 'fk_invoices_refunds'
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.127ms] [34;1m[rows:1][0m SELECT count(*) FROM INFORMATION_SCHEMA.table_constraints WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'refunds' AND constraint_name = 'fk_users_refunds'
+
+2025/07/25 00:35:10 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/database/database.go:33
+[0m[33m[0.110ms] [34;1m[rows:1][0m SELECT count(*) FROM pg_indexes WHERE tablename = 'refunds' AND indexname = 'idx_refunds_deleted_at' AND schemaname = CURRENT_SCHEMA()
+2025/07/25 00:35:10 Database migration completed!
+[GIN-debug] [WARNING] Creating an Engine instance with the Logger and Recovery middleware already attached.
+
+[GIN-debug] [WARNING] Running in "debug" mode. Switch to "release" mode in production.
+ - using env:	export GIN_MODE=release
+ - using code:	gin.SetMode(gin.ReleaseMode)
+
+[GIN-debug] POST   /subscribe                --> invoxa/handlers.Subscribe (5 handlers)
+[GIN-debug] POST   /pay_invoice              --> invoxa/handlers.PayInvoice (5 handlers)
+[GIN-debug] POST   /upgrade_plan             --> invoxa/handlers.UpgradePlan (5 handlers)
+[GIN-debug] GET    /invoice/:id              --> invoxa/handlers.GetInvoice (5 handlers)
+[GIN-debug] POST   /refund                   --> invoxa/handlers.Refund (5 handlers)
+[GIN-debug] GET    /user/:id/subscriptions   --> invoxa/handlers.GetUserSubscriptions (5 handlers)
+[GIN-debug] POST   /subscription_plans       --> invoxa/handlers.CreateSubscriptionPlan (5 handlers)
+[GIN-debug] GET    /org/:id/summary          --> invoxa/handlers.GetOrgSummary (5 handlers)
+[GIN-debug] POST   /users                    --> invoxa/handlers.CreateUser (4 handlers)
+[GIN-debug] POST   /organizations            --> invoxa/handlers.CreateOrganization (4 handlers)
+[GIN-debug] POST   /admin/clear_db           --> invoxa/handlers.ClearDatabase (4 handlers)
+[GIN-debug] GET    /ping                     --> main.main.func2 (4 handlers)
+[GIN-debug] [WARNING] You trusted all proxies, this is NOT safe. We recommend you to set a value.
+Please check https://pkg.go.dev/github.com/gin-gonic/gin#readme-don-t-trust-all-proxies for details.
+[GIN-debug] Listening and serving HTTP on :8081
+
+2025/07/25 00:35:22 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/handlers/user_handlers.go:32
+[0m[33m[2.117ms] [34;1m[rows:1][0m SELECT * FROM "organizations" WHERE "organizations"."id" = 1 AND "organizations"."deleted_at" IS NULL ORDER BY "organizations"."id" LIMIT 1
+
+2025/07/25 00:35:22 [31;1m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/handlers/user_handlers.go:38 [35;1mrecord not found
+[0m[33m[0.835ms] [34;1m[rows:0][0m SELECT * FROM "users" WHERE (username = 'testuser11' AND organization_id = 1) AND "users"."deleted_at" IS NULL ORDER BY "users"."id" LIMIT 1
+
+2025/07/25 00:35:22 [31;1m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/handlers/user_handlers.go:47 [35;1mrecord not found
+[0m[33m[0.519ms] [34;1m[rows:0][0m SELECT * FROM "users" WHERE email = 'test11@example.com' AND "users"."deleted_at" IS NULL ORDER BY "users"."id" LIMIT 1
+
+2025/07/25 00:35:22 [32m/Users/dhawalpandya/Sandbox/aeonis/invoxa-test/handlers/user_handlers.go:68
+[0m[33m[3.195ms] [34;1m[rows:1][0m INSERT INTO "users" ("created_at","updated_at","deleted_at","username","email","password_hash","organization_id") VALUES ('2025-07-25 00:35:22.958','2025-07-25 00:35:22.958',NULL,'testuser11','test11@example.com','$2a$10$uNCE59iIK7abvME8GajQ6O2dJTEWPXEGrvHzaO4VrHTMMRZgauGSG',1) RETURNING "id"
+[GIN] 2025/07/25 - 00:35:22 | 201 |   81.573083ms |             ::1 | POST     "/users"
