@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"errors"
 	"net/http"
 	"strconv"
 
@@ -24,36 +25,46 @@ func CreateUser(c *gin.Context) {
 	defer span.End()
 	var req CreateUserRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
+		span.SetError(err.Error(), "")
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+	span.SetAttributes(map[string]interface{}{"username": req.Username, "email": req.Email})
 
 	var organization models.Organization
 	if err := database.DB.First(&organization, req.OrganizationID).Error; err != nil {
+		span.SetError(err.Error(), "")
 		c.JSON(http.StatusNotFound, gin.H{"error": "Target organization not found"})
 		return
 	}
 
 	var existingUser models.User
 	if err := database.DB.Where("username = ? AND organization_id = ?", req.Username, req.OrganizationID).First(&existingUser).Error; err == nil {
-		c.JSON(http.StatusConflict, gin.H{"error": "Username already exists for this organization"})
+		err = errors.New("username already exists for this organization")
+		span.SetError(err.Error(), "")
+		c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
 		return
 	} else if err != gorm.ErrRecordNotFound {
+		span.SetError(err.Error(), "")
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to check for existing username"})
 		return
 	}
 
 	var existingEmailUser models.User
 	if err := database.DB.Where("email = ?", req.Email).First(&existingEmailUser).Error; err == nil {
-		c.JSON(http.StatusConflict, gin.H{"error": "Email address already in use"})
+		err = errors.New("email address already in use")
+		span.SetError(err.Error(), "")
+		c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
 		return
 	} else if err != gorm.ErrRecordNotFound {
+		span.SetError(err.Error(), "")
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to check for existing email"})
 		return
 	}
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
 	if err != nil {
+		span.SetError(err.Error(), "")
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to hash password"})
 		return
 	}
@@ -66,6 +77,7 @@ func CreateUser(c *gin.Context) {
 	}
 
 	if err := database.DB.Create(&user).Error; err != nil {
+		span.SetError(err.Error(), "")
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create user"})
 		return
 	}
@@ -74,23 +86,31 @@ func CreateUser(c *gin.Context) {
 }
 
 func GetUserSubscriptions(c *gin.Context) {
+	_, span := Tracer.StartSpan(c.Request.Context(), "GetUserSubscriptions")
+	defer span.End()
+
 	userIDStr := c.Param("id")
 	userID, err := strconv.ParseUint(userIDStr, 10, 64)
 	if err != nil {
+		span.SetError(err.Error(), "")
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
 		return
 	}
+	span.SetAttributes(map[string]interface{}{"user_id": userID})
 
 	callerUserID := c.GetUint64("callerUserID")
 	callerOrganizationID := c.GetUint64("callerOrganizationID")
 
 	if userID != callerUserID {
-		c.JSON(http.StatusForbidden, gin.H{"error": "Unauthorized: You can only view your own subscriptions."})
+		err := errors.New("unauthorized: you can only view your own subscriptions")
+		span.SetError(err.Error(), "")
+		c.JSON(http.StatusForbidden, gin.H{"error": err.Error()})
 		return
 	}
 
 	var user models.User
 	if err := database.DB.Preload("Organization").First(&user, userID).Error; err != nil {
+		span.SetError(err.Error(), "")
 		if err == gorm.ErrRecordNotFound {
 			c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
 			return
@@ -100,12 +120,15 @@ func GetUserSubscriptions(c *gin.Context) {
 	}
 
 	if user.OrganizationID != uint(callerOrganizationID) {
-		c.JSON(http.StatusForbidden, gin.H{"error": "Unauthorized: User does not belong to the calling organization."})
+		err := errors.New("unauthorized: user does not belong to the calling organization")
+		span.SetError(err.Error(), "")
+		c.JSON(http.StatusForbidden, gin.H{"error": err.Error()})
 		return
 	}
 
 	var subscriptions []models.Subscription
 	if err := database.DB.Where("organization_id = ?", user.OrganizationID).Preload("SubscriptionPlan").Find(&subscriptions).Error; err != nil {
+		span.SetError(err.Error(), "")
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve subscriptions for user's organization"})
 		return
 	}

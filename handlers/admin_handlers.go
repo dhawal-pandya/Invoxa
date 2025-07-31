@@ -9,9 +9,12 @@ import (
 )
 
 func ClearDatabase(c *gin.Context) {
+	_, span := Tracer.StartSpan(c.Request.Context(), "ClearDatabase")
+	defer span.End()
 
 	err := database.ClearDBAndMigrate()
 	if err != nil {
+		span.SetError(err.Error(), "")
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to clear and migrate database"})
 		return
 	}

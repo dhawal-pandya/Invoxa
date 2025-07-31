@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"errors"
 	"net/http"
 	"strconv"
 
@@ -22,15 +23,20 @@ func CreateOrganization(c *gin.Context) {
 
 	var req CreateOrganizationRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
+		span.SetError(err.Error(), "")
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+	span.SetAttributes(map[string]interface{}{"organization_name": req.Name})
 
 	var existingOrg models.Organization
 	if err := database.DB.Where("name = ?", req.Name).First(&existingOrg).Error; err == nil {
-		c.JSON(http.StatusConflict, gin.H{"error": "Organization with this name already exists"})
+		err = errors.New("organization with this name already exists")
+		span.SetError(err.Error(), "")
+		c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
 		return
 	} else if err != gorm.ErrRecordNotFound {
+		span.SetError(err.Error(), "")
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to check for existing organization"})
 		return
 	}
@@ -41,6 +47,7 @@ func CreateOrganization(c *gin.Context) {
 	}
 
 	if err := database.DB.Create(&organization).Error; err != nil {
+		span.SetError(err.Error(), "")
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create organization"})
 		return
 	}
@@ -59,22 +66,30 @@ type OrgSummaryResponse struct {
 }
 
 func GetOrgSummary(c *gin.Context) {
+	_, span := Tracer.StartSpan(c.Request.Context(), "GetOrgSummary")
+	defer span.End()
+
 	orgIDStr := c.Param("id")
 	orgID, err := strconv.ParseUint(orgIDStr, 10, 64)
 	if err != nil {
+		span.SetError(err.Error(), "")
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid organization ID"})
 		return
 	}
+	span.SetAttributes(map[string]interface{}{"organization_id": orgID})
 
 	callerOrganizationID := c.GetUint64("callerOrganizationID")
 
 	if orgID != callerOrganizationID {
-		c.JSON(http.StatusForbidden, gin.H{"error": "Unauthorized: Caller organization ID does not match target organization ID"})
+		err := errors.New("unauthorized: caller organization id does not match target organization id")
+		span.SetError(err.Error(), "")
+		c.JSON(http.StatusForbidden, gin.H{"error": err.Error()})
 		return
 	}
 
 	var organization models.Organization
 	if err := database.DB.First(&organization, orgID).Error; err != nil {
+		span.SetError(err.Error(), "")
 		if err == gorm.ErrRecordNotFound {
 			c.JSON(http.StatusNotFound, gin.H{"error": "Organization not found"})
 			return

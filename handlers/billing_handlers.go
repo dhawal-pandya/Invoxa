@@ -21,35 +21,45 @@ type SubscribeRequest struct {
 }
 
 func Subscribe(c *gin.Context) {
-	_, span := Tracer.StartSpan(c.Request.Context(), "Subscribe")
+	ctx, span := Tracer.StartSpan(c.Request.Context(), "Subscribe")
 	defer span.End()
 
 	var req SubscribeRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
+		span.SetError(err.Error(), "")
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	out := Tracer.TraceFunc(c.Request.Context(), validateSubscriptionRequest, c, req)
-	if err, ok := out[0].(error); ok && err != nil {
+	// Manual validation that was in validateSubscriptionRequest
+	callerOrganizationID := c.GetUint64("callerOrganizationID")
+	if uint(callerOrganizationID) != req.OrganizationID {
+		err := errors.New("unauthorized: caller organization id does not match target organization id")
+		span.SetError(err.Error(), "")
+		c.JSON(http.StatusForbidden, gin.H{"error": err.Error()})
+		return
+	}
+
+	err, plan := validateSubscriptionRequest(ctx, req)
+	if err != nil {
+		span.SetError(err.Error(), "")
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	plan := out[1].(models.SubscriptionPlan)
 
-	out = Tracer.TraceFunc(c.Request.Context(), createSubscription, req, plan)
-	if err, ok := out[0].(error); ok && err != nil {
+	err, subscription := createSubscription(ctx, req, plan)
+	if err != nil {
+		span.SetError(err.Error(), "")
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	subscription := out[1].(models.Subscription)
 
-	out = Tracer.TraceFunc(c.Request.Context(), createInvoice, req, plan)
-	if err, ok := out[0].(error); ok && err != nil {
+	err, invoice := createInvoice(ctx, req, plan)
+	if err != nil {
+		span.SetError(err.Error(), "")
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	invoice := out[1].(models.Invoice)
 
 	c.JSON(http.StatusCreated, gin.H{
 		"message":         "Subscription and initial invoice created successfully",
@@ -58,45 +68,56 @@ func Subscribe(c *gin.Context) {
 	})
 }
 
-func validateSubscriptionRequest(c *gin.Context, req SubscribeRequest) (error, models.SubscriptionPlan) {
-	callerOrganizationID := c.GetUint64("callerOrganizationID")
+func validateSubscriptionRequest(ctx context.Context, req SubscribeRequest) (error, models.SubscriptionPlan) {
+	_, span := Tracer.StartSpan(ctx, "validateSubscriptionRequest")
+	defer span.End()
 
-	if uint(callerOrganizationID) != req.OrganizationID {
-		return errors.New("Unauthorized: Caller organization ID does not match target organization ID"), models.SubscriptionPlan{}
-	}
+	// The original function was using c.GetUint64, which we can't do here.
+	// This validation should be done in the main handler before calling this function.
+	// For now, we will proceed without it, assuming the caller has validated.
 
 	var organization models.Organization
-	if err := database.DB.WithContext(c.Request.Context()).First(&organization, req.OrganizationID).Error; err != nil {
+	if err := database.DB.WithContext(ctx).First(&organization, req.OrganizationID).Error; err != nil {
+		span.SetError(err.Error(), "")
 		return errors.New("Organization not found"), models.SubscriptionPlan{}
 	}
 
 	var plan models.SubscriptionPlan
-	if err := database.DB.WithContext(c.Request.Context()).Where("id = ? AND organization_id = ?", req.SubscriptionPlanID, req.OrganizationID).First(&plan).Error; err != nil {
+	if err := database.DB.WithContext(ctx).Where("id = ? AND organization_id = ?", req.SubscriptionPlanID, req.OrganizationID).First(&plan).Error; err != nil {
+		span.SetError(err.Error(), "")
 		return errors.New("Subscription plan not found for this organization"), models.SubscriptionPlan{}
 	}
 
 	var user models.User
-	if err := database.DB.WithContext(c.Request.Context()).Where("id = ? AND organization_id = ?", req.UserID, req.OrganizationID).First(&user).Error; err != nil {
+	if err := database.DB.WithContext(ctx).Where("id = ? AND organization_id = ?", req.UserID, req.OrganizationID).First(&user).Error; err != nil {
+		span.SetError(err.Error(), "")
 		return errors.New("User not found or does not belong to the target organization"), models.SubscriptionPlan{}
 	}
 
 	return nil, plan
 }
 
-func createSubscription(req SubscribeRequest, plan models.SubscriptionPlan) (error, models.Subscription) {
+func createSubscription(ctx context.Context, req SubscribeRequest, plan models.SubscriptionPlan) (error, models.Subscription) {
+	_, span := Tracer.StartSpan(ctx, "createSubscription")
+	defer span.End()
+
 	subscription := models.Subscription{
 		OrganizationID:     req.OrganizationID,
 		SubscriptionPlanID: plan.ID,
 		StartDate:          time.Now(),
 		IsActive:           true,
 	}
-	if err := database.DB.WithContext(context.Background()).Create(&subscription).Error; err != nil {
+	if err := database.DB.WithContext(ctx).Create(&subscription).Error; err != nil {
+		span.SetError(err.Error(), "")
 		return errors.New("Failed to create subscription"), models.Subscription{}
 	}
 	return nil, subscription
 }
 
-func createInvoice(req SubscribeRequest, plan models.SubscriptionPlan) (error, models.Invoice) {
+func createInvoice(ctx context.Context, req SubscribeRequest, plan models.SubscriptionPlan) (error, models.Invoice) {
+	_, span := Tracer.StartSpan(ctx, "createInvoice")
+	defer span.End()
+
 	invoice := models.Invoice{
 		OrganizationID: req.OrganizationID,
 		UserID:         req.UserID,
@@ -106,7 +127,8 @@ func createInvoice(req SubscribeRequest, plan models.SubscriptionPlan) (error, m
 		DueDate:        time.Now().AddDate(0, 1, 0), // due in 1 month for monthly plans
 		Paid:           false,
 	}
-	if err := database.DB.WithContext(context.Background()).Create(&invoice).Error; err != nil {
+	if err := database.DB.WithContext(ctx).Create(&invoice).Error; err != nil {
+		span.SetError(err.Error(), "")
 		return errors.New("Failed to create initial invoice"), models.Invoice{}
 	}
 	return nil, invoice
@@ -123,37 +145,55 @@ type PayInvoiceRequest struct {
 }
 
 func PayInvoice(c *gin.Context) {
+	_, span := Tracer.StartSpan(c.Request.Context(), "PayInvoice")
+	defer span.End()
+
 	var req PayInvoiceRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
+		span.SetError(err.Error(), "")
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+
+	span.SetAttributes(map[string]interface{}{
+		"invoice_id": req.InvoiceID,
+		"user_id":    req.UserID,
+		"amount":     req.Amount,
+	})
 
 	callerOrganizationID := c.GetUint64("callerOrganizationID")
 
 	var invoice models.Invoice
 	if err := database.DB.Preload("Organization").First(&invoice, req.InvoiceID).Error; err != nil {
+		span.SetError(err.Error(), "")
 		c.JSON(http.StatusNotFound, gin.H{"error": "Invoice not found"})
 		return
 	}
 
 	if invoice.OrganizationID != uint(callerOrganizationID) {
-		c.JSON(http.StatusForbidden, gin.H{"error": "Unauthorized: Invoice does not belong to the caller's organization"})
+		err := errors.New("unauthorized: invoice does not belong to the caller's organization")
+		span.SetError(err.Error(), "")
+		c.JSON(http.StatusForbidden, gin.H{"error": err.Error()})
 		return
 	}
 
 	if invoice.Paid {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invoice is already paid"})
+		err := errors.New("invoice is already paid")
+		span.SetError(err.Error(), "")
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
 	if req.Amount < invoice.Amount {
+		err := errors.New("payment amount is less than invoice amount")
+		span.SetError(err.Error(), "")
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Payment amount is less than invoice amount. Partial payments not supported in this version."})
 		return
 	}
 
 	var user models.User
 	if err := database.DB.Where("id = ? AND organization_id = ?", req.UserID, invoice.OrganizationID).First(&user).Error; err != nil {
+		span.SetError(err.Error(), "")
 		c.JSON(http.StatusNotFound, gin.H{"error": "User not found or does not belong to the organization associated with the invoice"})
 		return
 	}
@@ -169,12 +209,14 @@ func PayInvoice(c *gin.Context) {
 	}
 
 	if err := database.DB.Create(&payment).Error; err != nil {
+		span.SetError(err.Error(), "")
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create payment record"})
 		return
 	}
 
 	invoice.Paid = true
 	if err := database.DB.Save(&invoice).Error; err != nil {
+		span.SetError(err.Error(), "")
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update invoice status"})
 		return
 	}
@@ -189,33 +231,48 @@ type UpgradePlanRequest struct {
 }
 
 func UpgradePlan(c *gin.Context) {
+	_, span := Tracer.StartSpan(c.Request.Context(), "UpgradePlan")
+	defer span.End()
+
 	var req UpgradePlanRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
+		span.SetError(err.Error(), "")
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
+	span.SetAttributes(map[string]interface{}{
+		"organization_id":          req.OrganizationID,
+		"new_subscription_plan_id": req.NewSubscriptionPlanID,
+		"user_id":                  req.UserID,
+	})
+
 	callerOrganizationID := c.GetUint64("callerOrganizationID")
 
 	if uint(callerOrganizationID) != req.OrganizationID {
-		c.JSON(http.StatusForbidden, gin.H{"error": "Unauthorized: Caller organization ID does not match target organization ID"})
+		err := errors.New("unauthorized: caller organization id does not match target organization id")
+		span.SetError(err.Error(), "")
+		c.JSON(http.StatusForbidden, gin.H{"error": err.Error()})
 		return
 	}
 
 	var organization models.Organization
 	if err := database.DB.Preload("Subscriptions").Preload("Subscriptions.SubscriptionPlan").First(&organization, req.OrganizationID).Error; err != nil {
+		span.SetError(err.Error(), "")
 		c.JSON(http.StatusNotFound, gin.H{"error": "Organization not found"})
 		return
 	}
 
 	var newPlan models.SubscriptionPlan
 	if err := database.DB.Where("id = ? AND organization_id = ?", req.NewSubscriptionPlanID, req.OrganizationID).First(&newPlan).Error; err != nil {
+		span.SetError(err.Error(), "")
 		c.JSON(http.StatusNotFound, gin.H{"error": "New subscription plan not found for this organization"})
 		return
 	}
 
 	var user models.User
 	if err := database.DB.Where("id = ? AND organization_id = ?", req.UserID, req.OrganizationID).First(&user).Error; err != nil {
+		span.SetError(err.Error(), "")
 		c.JSON(http.StatusNotFound, gin.H{"error": "User not found or does not belong to organization"})
 		return
 	}
@@ -231,17 +288,22 @@ func UpgradePlan(c *gin.Context) {
 	}
 
 	if !foundActive {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "No active subscription found for this organization"})
+		err := errors.New("no active subscription found for this organization")
+		span.SetError(err.Error(), "")
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
 	if currentSubscription.SubscriptionPlanID == req.NewSubscriptionPlanID {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Cannot upgrade to the same plan"})
+		err := errors.New("cannot upgrade to the same plan")
+		span.SetError(err.Error(), "")
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
 	var currentPlan models.SubscriptionPlan
 	if err := database.DB.First(&currentPlan, currentSubscription.SubscriptionPlanID).Error; err != nil {
+		span.SetError(err.Error(), "")
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve current subscription plan details"})
 		return
 	}
@@ -256,6 +318,7 @@ func UpgradePlan(c *gin.Context) {
 	currentSubscription.EndDate = today
 	currentSubscription.IsActive = false
 	if err := database.DB.Save(&currentSubscription).Error; err != nil {
+		span.SetError(err.Error(), "")
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to cancel old subscription"})
 		return
 	}
@@ -267,6 +330,7 @@ func UpgradePlan(c *gin.Context) {
 		IsActive:           true,
 	}
 	if err := database.DB.Create(&newSubscription).Error; err != nil {
+		span.SetError(err.Error(), "")
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create new subscription"})
 		return
 	}
@@ -282,6 +346,7 @@ func UpgradePlan(c *gin.Context) {
 	}
 
 	if err := database.DB.Create(&invoice).Error; err != nil {
+		span.SetError(err.Error(), "")
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create prorated invoice"})
 		return
 	}
@@ -296,17 +361,23 @@ func UpgradePlan(c *gin.Context) {
 }
 
 func GetInvoice(c *gin.Context) {
+	_, span := Tracer.StartSpan(c.Request.Context(), "GetInvoice")
+	defer span.End()
+
 	invoiceIDStr := c.Param("id")
 	invoiceID, err := strconv.ParseUint(invoiceIDStr, 10, 64)
 	if err != nil {
+		span.SetError(err.Error(), "")
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid invoice ID"})
 		return
 	}
+	span.SetAttributes(map[string]interface{}{"invoice_id": invoiceID})
 
 	callerOrganizationID := c.GetUint64("callerOrganizationID")
 
 	var invoice models.Invoice
 	if err := database.DB.Preload("Organization").Preload("User").First(&invoice, invoiceID).Error; err != nil {
+		span.SetError(err.Error(), "")
 		if err == gorm.ErrRecordNotFound {
 			c.JSON(http.StatusNotFound, gin.H{"error": "Invoice not found"})
 			return
@@ -316,7 +387,9 @@ func GetInvoice(c *gin.Context) {
 	}
 
 	if invoice.OrganizationID != uint(callerOrganizationID) {
-		c.JSON(http.StatusForbidden, gin.H{"error": "Unauthorized: Invoice does not belong to the caller's organization"})
+		err := errors.New("unauthorized: invoice does not belong to the caller's organization")
+		span.SetError(err.Error(), "")
+		c.JSON(http.StatusForbidden, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -334,48 +407,67 @@ type RefundRequest struct {
 }
 
 func Refund(c *gin.Context) {
+	_, span := Tracer.StartSpan(c.Request.Context(), "Refund")
+	defer span.End()
+
 	var req RefundRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
+		span.SetError(err.Error(), "")
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+	span.SetAttributes(map[string]interface{}{
+		"invoice_id": req.InvoiceID,
+		"payment_id": req.PaymentID,
+		"amount":     req.Amount,
+	})
 
 	callerOrganizationID := c.GetUint64("callerOrganizationID")
 
 	var invoice models.Invoice
 	if err := database.DB.First(&invoice, req.InvoiceID).Error; err != nil {
+		span.SetError(err.Error(), "")
 		c.JSON(http.StatusNotFound, gin.H{"error": "Invoice not found"})
 		return
 	}
 
 	if invoice.OrganizationID != uint(callerOrganizationID) {
-		c.JSON(http.StatusForbidden, gin.H{"error": "Unauthorized: Invoice does not belong to the caller's organization"})
+		err := errors.New("unauthorized: invoice does not belong to the caller's organization")
+		span.SetError(err.Error(), "")
+		c.JSON(http.StatusForbidden, gin.H{"error": err.Error()})
 		return
 	}
 
 	var payment models.Payment
 	if err := database.DB.Where("id = ? AND invoice_id = ?", req.PaymentID, req.InvoiceID).First(&payment).Error; err != nil {
+		span.SetError(err.Error(), "")
 		c.JSON(http.StatusNotFound, gin.H{"error": "Payment not found or does not belong to the specified invoice"})
 		return
 	}
 
 	var user models.User
 	if err := database.DB.Where("id = ? AND organization_id = ?", req.UserID, invoice.OrganizationID).First(&user).Error; err != nil {
+		span.SetError(err.Error(), "")
 		c.JSON(http.StatusNotFound, gin.H{"error": "User not found or does not belong to the organization associated with the invoice"})
 		return
 	}
 
 	var existingRefund models.Refund
 	if err := database.DB.Where("payment_id = ? AND transaction_id = ?", req.PaymentID, req.TransactionID).First(&existingRefund).Error; err == nil {
-		c.JSON(http.StatusConflict, gin.H{"error": "A refund with this transaction ID already exists for this payment"})
+		err = errors.New("a refund with this transaction id already exists for this payment")
+		span.SetError(err.Error(), "")
+		c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
 		return
 	} else if err != gorm.ErrRecordNotFound {
+		span.SetError(err.Error(), "")
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to check for existing refund"})
 		return
 	}
 
 	if req.Amount > payment.Amount {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Refund amount cannot exceed original payment amount"})
+		err := errors.New("refund amount cannot exceed original payment amount")
+		span.SetError(err.Error(), "")
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -391,10 +483,10 @@ func Refund(c *gin.Context) {
 	}
 
 	if err := database.DB.Create(&refund).Error; err != nil {
+		span.SetError(err.Error(), "")
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create refund record"})
 		return
 	}
-
 
 	c.JSON(http.StatusCreated, gin.H{"message": "Refund created successfully", "refund_id": refund.ID})
 }

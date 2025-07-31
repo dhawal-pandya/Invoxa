@@ -1,13 +1,12 @@
 package main
 
 import (
+	"invoxa/database"
+	"invoxa/handlers"
 	"log"
 	"os"
 
-	"invoxa/database"
-	"invoxa/handlers"
-
-	sdktracer "github.com/dhawal-pandya/aeonis/packages/tracer-sdk/go"
+	tracer "github.com/dhawal-pandya/aeonis/packages/tracer-sdk/go"
 	"github.com/gin-gonic/gin"
 )
 
@@ -16,24 +15,31 @@ func main() {
 	if apiKey == "" {
 		log.Fatal("AEONIS_API_KEY environment variable not set")
 	}
+	log.Printf("Initializing tracer with hardcoded API Key: %s", apiKey)
 
-	exporter := sdktracer.NewHTTPExporter("http://localhost:8000/v1/traces", apiKey)
-	sanitizer := sdktracer.NewPIISanitizer()
-	tracer := sdktracer.NewTracerWithExporter("invoxa-test", exporter, sanitizer)
-	handlers.SetTracer(tracer)
+	aeonisTracer := tracer.NewTracer(
+		"invoxa-test",
+		"http://localhost:8000/v1/traces",
+		apiKey,
+		tracer.NewPIISanitizer(),
+	)
+	defer aeonisTracer.Shutdown()
+
+	handlers.SetTracer(aeonisTracer)
 
 	database.ConnectDatabase()
 
 	r := gin.Default()
 
+	// Middleware to create the root span for each request.
 	r.Use(func(c *gin.Context) {
-		ctx, span := handlers.Tracer.StartSpan(c.Request.Context(), c.Request.URL.Path)
+		ctx, span := aeonisTracer.StartSpan(c.Request.Context(), c.Request.URL.Path)
 		defer span.End()
 
 		span.SetAttributes(map[string]interface{}{
-			"http.method": c.Request.Method,
-			"http.url":    c.Request.URL.String(),
-			"http.client_ip": c.ClientIP(),
+			"http.method":     c.Request.Method,
+			"http.url":        c.Request.URL.String(),
+			"http.client_ip":  c.ClientIP(),
 			"http.user_agent": c.Request.UserAgent(),
 		})
 
@@ -55,7 +61,6 @@ func main() {
 		authRequired.POST("/refund", handlers.Refund)
 		authRequired.GET("/user/:id/subscriptions", handlers.GetUserSubscriptions)
 		authRequired.POST("/subscription_plans", handlers.CreateSubscriptionPlan)
-
 		authRequired.GET("org/:id/summary", handlers.GetOrgSummary)
 	}
 
