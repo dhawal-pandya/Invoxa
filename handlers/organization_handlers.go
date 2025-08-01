@@ -4,6 +4,7 @@ import (
 	"errors"
 	"net/http"
 	"strconv"
+	"time"
 
 	"invoxa/database"
 	"invoxa/models"
@@ -22,6 +23,9 @@ func CreateOrganization(c *gin.Context) {
 	defer span.End()
 
 	var req CreateOrganizationRequest
+	// wait 2 seconds
+	time.Sleep(2 * time.Second)
+
 	if err := c.ShouldBindJSON(&req); err != nil {
 		span.SetError(err.Error(), "")
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
